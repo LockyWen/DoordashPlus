@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: doordash
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/doordash
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: secret
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: assign_id
+

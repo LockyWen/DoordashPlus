@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: doordash
+  datasource:
+    druid:
+      url: XXXX
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: XXX
+      password: XXX
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: assign_id
