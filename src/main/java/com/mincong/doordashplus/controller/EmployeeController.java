@@ -2,19 +2,20 @@ package com.mincong.doordashplus.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mincong.doordashplus.common.LogoutRequest;
 import com.mincong.doordashplus.common.ResponseModel;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import com.mincong.doordashplus.entity.*;
 import com.mincong.doordashplus.service.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -57,8 +58,8 @@ public class EmployeeController {
             return ResponseModel.error("账号被禁用，请联系管理员或客服！");
         }
 
-        request.getSession().setAttribute("employee" + emp.getIdNumber(),emp.getId());
-        log.info("Current session Login: " + "employee" + emp.getIdNumber());
+        request.getSession().setAttribute("employee", emp.getId());
+        log.info("Current session Login: " + "employee");
 
         // 将从数据库
         return ResponseModel.success(emp);
@@ -71,8 +72,8 @@ public class EmployeeController {
     @PostMapping("/logout")
     public ResponseModel<String> logout(HttpServletRequest request, @RequestBody Employee employee){
 
-        request.getSession().removeAttribute("employee" + employee.getIdNumber());
-        log.info("Current session Logout: " + "employee" + employee.getIdNumber());
+        request.getSession().removeAttribute("employee");
+        log.info("Current session Logout: " + "employee");
         return ResponseModel.success("安全退出成功！");
     }
 
@@ -81,16 +82,17 @@ public class EmployeeController {
         log.info("新增员工，员工信息:{}",employee.toString());
 
         // 在新增员工操作中，对员工的密码进行初始化( MD5加密 )
-        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        log.info("Password: " + employee.getPassword());
+        employee.setPassword(DigestUtils.md5DigestAsHex("12345".getBytes()));
 
         // 下面设置 公共属性的值(createTime、updateTime、createUser、updateUser)交给 MyMetaObjectHandler类处理
-//        employee.setCreateTime(LocalDateTime.now());
-//        employee.setUpdateTime(LocalDateTime.now());
-//
-//        Long empId = (Long) request.getSession().getAttribute("employee");
-//
-//        employee.setCreateUser(empId);
-//        employee.setUpdateUser(empId);
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+
+        Long empId = (Long) request.getSession().getAttribute("employee");
+
+        employee.setCreateUser(empId);
+        employee.setUpdateUser(empId);
 
         employeeService.save(employee);
 
@@ -154,8 +156,4 @@ public class EmployeeController {
         }
         return ResponseModel.error("没有查询到员工信息！");
     }
-
-
-
-
 }
