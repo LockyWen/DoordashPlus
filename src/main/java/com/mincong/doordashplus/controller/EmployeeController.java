@@ -10,12 +10,8 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import com.mincong.doordashplus.entity.*;
 import com.mincong.doordashplus.service.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -47,15 +43,15 @@ public class EmployeeController {
         Employee emp = employeeService.getOne(queryWrapper);
 
         if (emp == null){
-            return ResponseModel.error("用户名不存在！");
+            return ResponseModel.error("Users do not exist！");
         }
 
         if (!emp.getPassword().equals(password)){
-            return ResponseModel.error("用户名或密码错误！");
+            return ResponseModel.error("Your username and password are not correct！");
         }
 
         if (emp.getStatus() != 1){  // 账号被禁用，status == 1,账号可以正常登录
-            return ResponseModel.error("账号被禁用，请联系管理员或客服！");
+            return ResponseModel.error("Account is banned. Please contact the admin！");
         }
 
         request.getSession().setAttribute("employee", emp.getId());
@@ -74,7 +70,7 @@ public class EmployeeController {
 
         request.getSession().removeAttribute("employee");
         log.info("Current session Logout: " + "employee");
-        return ResponseModel.success("安全退出成功！");
+        return ResponseModel.success("Successfully logout！");
     }
 
     @PostMapping
@@ -86,13 +82,13 @@ public class EmployeeController {
         employee.setPassword(DigestUtils.md5DigestAsHex("12345".getBytes()));
 
         // 下面设置 公共属性的值(createTime、updateTime、createUser、updateUser)交给 MyMetaObjectHandler类处理
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
 
-        Long empId = (Long) request.getSession().getAttribute("employee");
+//        Long empId = (Long) request.getSession().getAttribute("employee");
 
-        employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
+//        employee.setCreateUser(empId);
+//        employee.setUpdateUser(empId);
 
         employeeService.save(employee);
 
@@ -124,7 +120,7 @@ public class EmployeeController {
         //   name不为null，才会 比较 getUsername方法和前端传入的name是否匹配 的过滤条件
         queryWrapper.like(StringUtils.isNotEmpty(name),Employee::getUsername,name);
         //  根据 更新用户的时间升序 分页展示
-//        queryWrapper.orderByAsc(Employee::getUpdateTime);
+        queryWrapper.orderByAsc(Employee::getUpdateTime);
 
         // 去数据库查询
         employeeService.page(pageInfo,queryWrapper);

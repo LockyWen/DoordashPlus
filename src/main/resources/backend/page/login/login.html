@@ -39,8 +39,8 @@
           <el-form-item style="width:100%;">
             <el-button :loading="loading" class="login-btn" size="medium" type="primary" style="width:100%;"
               @click.native.prevent="handleLogin">
-              <span v-if="!loading">登录</span>
-              <span v-else>登录中...</span>
+              <span v-if="!loading">Login</span>
+              <span v-else>Login...</span>
             </el-button>
           </el-form-item>
         </el-form>
@@ -74,14 +74,14 @@
         loginRules() {
           const validateUsername = (rule, value, callback) => {
             if (value.length < 1 ) {
-              callback(new Error('请输入用户名'))
+              callback(new Error('Please enter your username'))
             } else {
               callback()
             }
           }
           const validatePassword = (rule, value, callback) => {
             if (value.length < 6) {
-              callback(new Error('密码必须在6位以上'))
+              callback(new Error('The length of password should be at least 6'))
             } else {
               callback()
             }

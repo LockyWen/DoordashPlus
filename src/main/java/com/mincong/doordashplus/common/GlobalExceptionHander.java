@@ -30,9 +30,9 @@ public class GlobalExceptionHander {
         return ResponseModel.error("操作失败！");
     }
 
-//    @ExceptionHandler(MyCustomException.class)
-//    public ResponseModel<String> exceptionHandler(MyCustomException e){
-//        log.info(e.getMessage());
-//        return ResponseModel.error(e.getMessage());
-//    }
+    @ExceptionHandler(MyCustomException.class)
+    public ResponseModel<String> exceptionHandler(MyCustomException e){
+        log.info(e.getMessage());
+        return ResponseModel.error(e.getMessage());
+    }
 }
