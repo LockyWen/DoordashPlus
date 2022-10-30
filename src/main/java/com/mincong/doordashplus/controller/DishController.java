@@ -98,6 +98,68 @@ public class DishController {
 
 
 
+    /**
+     * 更新菜品为停售
+     * @param ids Dish的id
+     * @return
+     */
+    @PostMapping("/status/0")
+    public Result<String> updateStatusStop(Long ids){
+        Dish dish=dishService.getById(ids);
+        dish.setStatus(0);
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Dish::getId, ids);
+        dishService.update(dish, lambdaQueryWrapper);
+        return Result.success("Updated Success");
+    }
+
+    /**
+     * 更新菜品状态为起售
+     * @param ids Dish的id
+     * @return
+     */
+    @PostMapping("/status/1")
+    public Result<String> updateStatusStart(Long ids){
+        Dish dish=dishService.getById(ids);
+        dish.setStatus(1);
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Dish::getId, ids);
+        dishService.update(dish, lambdaQueryWrapper);
+        return Result.success("Updated Success");
+    }
+
+    /**
+     * 这里是逻辑删除，不是真删，把isDeleted字段更新为1就不显示了，间接完成了逻辑删除
+     * @param ids Dish的id
+     * @return
+     */
+    @DeleteMapping()
+    public Result<String> deleteDish(Long ids){
+        Dish dish=dishService.getById(ids);
+        dish.setIsDeleted(1);
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Dish::getId, ids);
+        dishService.update(dish, lambdaQueryWrapper);
+        return Result.success("Deleted Success!");
+    }
 
 
+    /**
+     * 新增套餐时 根据条件查询并填充菜品列表
+     * @param dish 这里本来是categoryId的，但是为了保证通用性，这里用Dish对象进行封装 有更好的通用性
+     *             Dish本身里面也是有categoryId的
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<Dish>> listCategory(Dish dish){
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        //查询
+        lambdaQueryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
+        //只查在售状态的菜品，1为启售状态
+        lambdaQueryWrapper.eq(Dish::getStatus, 1);
+        //排序，多个字段排序，先按Sort排，再按UpdateTime排
+        lambdaQueryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        List<Dish> dishList = dishService.list(lambdaQueryWrapper);
+        return Result.success(dishList);
+    }
 }

@@ -12,8 +12,6 @@ import com.mincong.doordashplus.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,12 +34,11 @@ public class SetmealController {
     // 当前端传输过来的 JSON数据 与 对应实体类 Setmeal中属性有所不同时，可以使用SetmealDto，
     //   SetmealDto 继承Setmeal，并添加 Setmeal中没有的JSON数据
     @PostMapping
-    @CacheEvict(value = "setmealCache",allEntries = true)
     public Result<String> save(@RequestBody SetmealDto setmealDto){
 
         log.info("套餐信息:{}",setmealDto);
         setmealService.saveWithDish(setmealDto);
-        return Result.success("套餐添加 成功！");
+        return Result.success("Combo added success！");
     }
 
     // 套餐Setmeal 分页查询
@@ -79,20 +76,18 @@ public class SetmealController {
     }
 
     @DeleteMapping
-    @CacheEvict(value = "setmealCache",allEntries = true)   //  删除套餐，就要删除套餐相关的所有缓存数据
     public Result<String> delete(@RequestParam List<Long> ids){
 
         log.info("ids = " + ids);
 
         setmealService.removeWithDish(ids);
 
-        return Result.success("成功删除套餐！");
+        return Result.success("Combo deleted success！");
     }
     // 前端发送的请求：http://localhost:8181/setmeal/list?categoryId=1516353794261180417&status=1
     // 注意: 请求后的参数 是以key-value键值对的方式 传入，而非JSON格式，不需要使用@RequestBody 来标注，
     //   只需要用包含 参数(key)的实体对象接收即可
     @GetMapping("/list")  // 在消费者端 展示套餐信息
-    @Cacheable(value = "setmealCache",key = "#setmeal.categoryId+'_' +#setmeal.status")
     public Result<List<Setmeal>> list(Setmeal setmeal){
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         Long categoryId = setmeal.getCategoryId();
@@ -120,10 +115,10 @@ public class SetmealController {
                 setmeal.setStatus(status);
                 setmealService.updateById(setmeal);
             }
-            return Result.success("套餐状态修改成功！");
+            return Result.success("Combo status updated success！");
         }
 
-        return Result.error("套餐状态不能修改,请联系管理或客服！");
+        return Result.error("Combo status cannot be modified, please contact the stuff！");
     }
 
     // http://localhost:8181/setmeal/1516369910723248130
@@ -136,11 +131,11 @@ public class SetmealController {
     @PutMapping
     public Result<String> updateMeal(@RequestBody SetmealDto setmealDto){
         setmealService.updateById(setmealDto);
-        return Result.success("套餐修改成功！");
+        return Result.success("Combo updated success！");
     }
 
 
-    //套餐的批量删除
+//    套餐的批量删除
 //    @DeleteMapping
 //    public Result<String> batchDelete(@RequestParam List<Long> ids){
 //        setmealService.batchDeleteByIds(ids);

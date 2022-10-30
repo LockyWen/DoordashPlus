@@ -34,7 +34,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal>
 
         // 在浏览器的控制台 可以看出，SetmealDish对象没有setmealId,需要通过setmealDto 来获取setmealId
         List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
-        setmealDishes.stream().map((mealDishs)->{
+        setmealDishes = setmealDishes.stream().map((mealDishs)->{
             mealDishs.setSetmealId(setmealDto.getId());
             return mealDishs;
         }).collect(Collectors.toList());
@@ -53,7 +53,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal>
 
         int count = this.count(queryWrapper);
         if (count > 0){
-            throw new MyCustomException("有套餐正在售卖，不能删除！");
+            throw new MyCustomException("Combos are being sold, you should not be removed！");
         }
         // 如果可以删除套餐，应该先操作setmeal表
         this.removeByIds(ids);
@@ -93,8 +93,6 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal>
 
         LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(id != null,SetmealDish::getSetmealId,id);
-
-
         if (setmeal != null){
             BeanUtils.copyProperties(setmeal,setmealDto);
 
@@ -103,9 +101,6 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal>
 
             return setmealDto;
         }
-
         return null;
     }
-
-
 }
