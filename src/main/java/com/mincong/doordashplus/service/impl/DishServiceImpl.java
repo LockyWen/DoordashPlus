@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
 
-//    @Autowired
-//    private DishFlavorService dishFlavorService;
+    @Autowired
+    private DishFlavorService dishFlavorService;
 
     @Autowired
     private DishService dishService;
@@ -31,19 +31,19 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     // 由于涉及到对dish、dish_flavor两张表的操作，应该使用 @Transactional 来标注事务
     @Transactional  //  让@Transactional 生效，还需要在启动类添加@EnableTransactionManagement 来开启事务
     public void saveWithFlavor(DishDto dishDto) {
-//        this.save(dishDto);
-//        log.info("this = " + this);
-//
-//        Long dishId = dishDto.getId(); //  获取前端传过来的 dishId
-//
-//        // 通过Debug的方式，发现前端传过来的 flavors 并不包含 dishId,故dish需要另外赋值
-//        List<DishFlavor> flavors = dishDto.getFlavors();
-//        flavors.stream().map((flavor)->{  //  flavor 为遍历出来的 每个DishFlavor对象
-//           flavor.setDishId(dishId);
-//           return flavor;
-//        }).collect(Collectors.toList());
-//
-//        dishFlavorService.saveBatch(flavors);
+        this.save(dishDto);
+        log.info("this = " + this);
+
+        Long dishId = dishDto.getId(); //  获取前端传过来的 dishId
+
+        // 通过Debug的方式，发现前端传过来的 flavors 并不包含 dishId,故dish需要另外赋值
+        List<DishFlavor> flavors = dishDto.getFlavors();
+        flavors = flavors.stream().map((flavor)->{  //  flavor 为遍历出来的 每个DishFlavor对象
+           flavor.setDishId(dishId);
+           return flavor;
+        }).collect(Collectors.toList());
+
+        dishFlavorService.saveBatch(flavors);
     }
 
     @Override
@@ -54,14 +54,14 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         DishDto dishDto = new DishDto();
 
         BeanUtils.copyProperties(dish,dishDto);
-//
+
 //        //  从dish_flavor表查询 当前菜品对应的口味信息
         LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(DishFlavor::getDishId,dishId);
-//
-//        List<DishFlavor> list = dishFlavorService.list(queryWrapper);
-//
-//        dishDto.setFlavors(list);
+
+        List<DishFlavor> list = dishFlavorService.list(queryWrapper);
+
+        dishDto.setFlavors(list);
         return dishDto;
     }
 
@@ -73,16 +73,16 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         // 删除当前菜品对应的口味数据，dish_flavor表的delete操作
         LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(DishFlavor::getDishId,dishDto.getId());
-//        dishFlavorService.remove(queryWrapper);
-//
-//        // 添加 前端提交过来的口味数据，insert操作
-//        List<DishFlavor> flavors = dishDto.getFlavors();
-//        List<DishFlavor> flavorList = flavors.stream().map((flavor) -> {
-//            flavor.setDishId(dishDto.getId());
-//            return flavor;
-//        }).collect(Collectors.toList());
-//
-//        dishFlavorService.saveBatch(flavorList);
+        dishFlavorService.remove(queryWrapper);
+
+        // 添加 前端提交过来的口味数据，insert操作
+        List<DishFlavor> flavors = dishDto.getFlavors();
+        List<DishFlavor> flavorList = flavors.stream().map((flavor) -> {
+            flavor.setDishId(dishDto.getId());
+            return flavor;
+        }).collect(Collectors.toList());
+
+        dishFlavorService.saveBatch(flavorList);
     }
 
     @Override

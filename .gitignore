@@ -66,4 +66,5 @@ secrets.yml
 .gradletasknamecache
 .mvn
 ./src/main/resources/application.yml
+src/main/resources/application.yml
 

@@ -1,6 +1,6 @@
 package com.mincong.doordashplus.controller;
 
-import com.mincong.doordashplus.common.ResponseModel;
+import com.mincong.doordashplus.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +13,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -27,7 +26,7 @@ public class CommonController {
 
     // 文件上传
     @PostMapping("/upload")
-    public ResponseModel<String> upload(MultipartFile file){
+    public Result<String> upload(MultipartFile file){
         // file是一个临时文件，需要转存到磁盘中的某个指定位置，否则本次请求完成后，临时文件file会删除
         //   upload方法名中的参数名 必须是file（文件上传表单的 中name属性值必须是file,name="file"）
         log.info("上传的文件为: "+file.toString());
@@ -54,7 +53,7 @@ public class CommonController {
             e.printStackTrace();
         }
 
-        return ResponseModel.success(fileName);
+        return Result.success(fileName);
     }
 
     // 文件下载  download

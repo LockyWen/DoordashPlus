@@ -2,7 +2,7 @@ package com.mincong.doordashplus.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mincong.doordashplus.common.ResponseModel;
+import com.mincong.doordashplus.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class EmployeeController {
         6、登录成功，将员工id 存入Session并返回登录成功的结果
      * */
     @PostMapping("/login")
-    public ResponseModel<Employee> login(HttpServletRequest request, @RequestBody Employee employee){
+    public Result<Employee> login(HttpServletRequest request, @RequestBody Employee employee){
         String password = employee.getPassword();
         // MD5 加密
         password = DigestUtils.md5DigestAsHex(password.getBytes());
@@ -43,22 +43,22 @@ public class EmployeeController {
         Employee emp = employeeService.getOne(queryWrapper);
 
         if (emp == null){
-            return ResponseModel.error("Users do not exist！");
+            return Result.error("Users do not exist！");
         }
 
         if (!emp.getPassword().equals(password)){
-            return ResponseModel.error("Your username and password are not correct！");
+            return Result.error("Your username and password are not correct！");
         }
 
         if (emp.getStatus() != 1){  // 账号被禁用，status == 1,账号可以正常登录
-            return ResponseModel.error("Account is banned. Please contact the admin！");
+            return Result.error("Account is banned. Please contact the admin！");
         }
 
         request.getSession().setAttribute("employee", emp.getId());
         log.info("Current session Login: " + "employee");
 
         // 将从数据库
-        return ResponseModel.success(emp);
+        return Result.success(emp);
     }
 
     //  退出功能实现
@@ -66,15 +66,15 @@ public class EmployeeController {
     //  2、返回结果
 
     @PostMapping("/logout")
-    public ResponseModel<String> logout(HttpServletRequest request, @RequestBody Employee employee){
+    public Result<String> logout(HttpServletRequest request, @RequestBody Employee employee){
 
         request.getSession().removeAttribute("employee");
         log.info("Current session Logout: " + "employee");
-        return ResponseModel.success("Successfully logout！");
+        return Result.success("Successfully logout！");
     }
 
     @PostMapping
-    public ResponseModel<String> save(HttpServletRequest request, @RequestBody Employee employee){
+    public Result<String> save(HttpServletRequest request, @RequestBody Employee employee){
         log.info("新增员工，员工信息:{}",employee.toString());
 
         // 在新增员工操作中，对员工的密码进行初始化( MD5加密 )
@@ -92,7 +92,7 @@ public class EmployeeController {
 
         employeeService.save(employee);
 
-        return ResponseModel.success("成功新增员工");
+        return Result.success("成功新增员工");
     }
 
     /*  pageShow方法的返回对象 应该是MP 中的
@@ -109,7 +109,7 @@ public class EmployeeController {
 //     4、Controller将查询的分页数据 响应给页面
 //     5、页面接收到分页数据并通过前端(ElementUI)的table组件展示到页面上
     @GetMapping("/page")
-    public ResponseModel<Page> pageShow(int page, int pageSize, String name){
+    public Result<Page> pageShow(int page, int pageSize, String name){
         log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
 
         // 创建分页构造器对象
@@ -124,11 +124,11 @@ public class EmployeeController {
 
         // 去数据库查询
         employeeService.page(pageInfo,queryWrapper);
-        return ResponseModel.success(pageInfo);
+        return Result.success(pageInfo);
     }
 
     @PutMapping
-    public ResponseModel<String> update(HttpServletRequest request, @RequestBody Employee employee){
+    public Result<String> update(HttpServletRequest request, @RequestBody Employee employee){
         log.info(employee.toString());
 
         // 下面设置 公共属性的值(createTime、updateTime、createUser、updateUser)交给 MyMetaObjectHandler类处理
@@ -137,19 +137,19 @@ public class EmployeeController {
 //        employee.setUpdateUser(empId);
 
         employeeService.updateById(employee);
-        return ResponseModel.success("员工信息修改成功！");
+        return Result.success("员工信息修改成功！");
 
     }
 
     @GetMapping("/{id}")
-    public ResponseModel<Employee> getById(@PathVariable Long id){
+    public Result<Employee> getById(@PathVariable Long id){
         log.info("根据id修改员工信息。。。。");
 
         Employee employee = employeeService.getById(id);
 
         if (employee != null){
-            return ResponseModel.success(employee);
+            return Result.success(employee);
         }
-        return ResponseModel.error("没有查询到员工信息！");
+        return Result.error("没有查询到员工信息！");
     }
 }

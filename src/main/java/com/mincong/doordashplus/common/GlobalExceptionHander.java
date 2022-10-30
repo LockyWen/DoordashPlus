@@ -19,20 +19,20 @@ public class GlobalExceptionHander {
     // 解决 字段username被唯一索引约束的情况下，添加相同的username，抛出SQLIntegrityConstraintViolationException 的全局异常
     // 异常处理方法
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseModel<String> exceptionHandler(SQLIntegrityConstraintViolationException e){
+    public Result<String> exceptionHandler(SQLIntegrityConstraintViolationException e){
         log.info(e.getMessage());
 
         if (e.getMessage().contains("Duplicate entry")){
             String[] split = e.getMessage().split(" ");
             String msg = split[2] + " already exists!";
-            return ResponseModel.error(msg);
+            return Result.error(msg);
         }
-        return ResponseModel.error("操作失败！");
+        return Result.error("操作失败！");
     }
 
     @ExceptionHandler(MyCustomException.class)
-    public ResponseModel<String> exceptionHandler(MyCustomException e){
+    public Result<String> exceptionHandler(MyCustomException e){
         log.info(e.getMessage());
-        return ResponseModel.error(e.getMessage());
+        return Result.error(e.getMessage());
     }
 }

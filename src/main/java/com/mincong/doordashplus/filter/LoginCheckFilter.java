@@ -2,7 +2,7 @@ package com.mincong.doordashplus.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.mincong.doordashplus.common.BaseContext;
-import com.mincong.doordashplus.common.ResponseModel;
+import com.mincong.doordashplus.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
 
@@ -79,7 +79,7 @@ public class LoginCheckFilter implements Filter {
         // 通过输出流 向客户端页面响应数据
         // 返回结果需要是 backend/js/request.js 中写好的返回结果
         log.info("用户未登录");
-        response.getWriter().write(JSON.toJSONString(ResponseModel.error("NOTLOGIN")));
+        response.getWriter().write(JSON.toJSONString(Result.error("NOTLOGIN")));
         return;
 
     }

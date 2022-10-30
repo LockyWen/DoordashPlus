@@ -60,22 +60,22 @@
       >
         <div>
           <el-form-item
-            label="菜品名称:"
+            label="Food name:"
             prop="name"
           >
             <el-input
               v-model="ruleForm.name"
-              placeholder="请填写菜品名称"
+              placeholder="Please enter food name"
               maxlength="20"
             />
           </el-form-item>
           <el-form-item
-            label="菜品分类:"
+            label="Category:"
             prop="categoryId"
           >
             <el-select
               v-model="ruleForm.categoryId"
-              placeholder="请选择菜品分类"
+              placeholder="Please choose category"
             >
               <el-option v-for="(item,index) in dishList" :key="index" :label="item.name" :value="item.id" />
             </el-select>
@@ -83,16 +83,16 @@
         </div>
         <div>
           <el-form-item
-            label="菜品价格:"
+            label="Price:"
             prop="price"
           >
             <el-input
               v-model="ruleForm.price"
-              placeholder="请设置菜品价格"
+              placeholder="Please set price"
             />
           </el-form-item>
         </div>
-        <el-form-item label="口味做法配置:">
+        <el-form-item label="Flavors:">
           <el-form-item>
             <div class="flavorBox">
               <span
@@ -105,7 +105,7 @@
                 class="flavor"
               >
                 <div class="title">
-                  <span>口味名（3个字内）</span><span>口味标签（输入标签回车添加）</span>
+                  <span>Flavors Name</span><span>Flavors Label</span>
                 </div>
                 <div class="cont">
                   <div
@@ -126,7 +126,7 @@
                               v-model="item.name"
                               type="text"
                               style="width: 100%"
-                              placeholder="请输入口味"
+                              placeholder="Please enter flavors"
                               @focus="selectFlavor(true,index)"
                               @blur="outSelect(false,index)"
                               @input="inputHandle(index)"
@@ -142,7 +142,7 @@
                           <span
                             v-if="dishFlavorsData == []"
                             class="none"
-                          >无数据</span>
+                          >No Data</span>
                         </div>
                       </div>
                     </div>
@@ -165,14 +165,14 @@
                     <span
                       class="delFlavor delBut non"
                       @click="delFlavor(index)"
-                    >删除</span>
+                    >Delete</span>
                   </div>
                 </div>
                 <div
                   class="addBut"
                   @click="addFlavore"
                 >
-                  添加口味
+                  Add flavors
                 </div>
               </div>
             </div>
@@ -182,7 +182,7 @@
         </div>
         <div>
           <el-form-item
-            label="菜品图片:"
+            label="Food Image:"
             prop="region"
             class="uploadImg"
           >
@@ -208,28 +208,28 @@
         </div>
         <div class="address">
           <el-form-item
-            label="菜品描述:"
+            label="Food Description:"
             prop="region"
           >
             <el-input
               v-model="ruleForm.description"
               type="textarea"
               :rows="3"
-              placeholder="菜品描述，最长200字"
-              maxlength="200"
+              placeholder="Food Description"
+              maxlength="400"
             />
           </el-form-item>
         </div>
         <div class="subBox address">
           <el-form-item>
             <el-button @click="goBack()">
-              取消
+              Cancel
             </el-button>
             <el-button
               type="primary"
               @click="submitForm('ruleForm')"
             >
-              保存
+              Save
             </el-button>
             <el-button
               v-if="actionType == 'add'"
@@ -237,7 +237,7 @@
               class="continue"
               @click="submitForm('ruleForm','goAnd')"
             >
-              保存并继续添加菜品
+              Save and Continue
             </el-button>
           </el-form-item>
         </div>
@@ -289,10 +289,10 @@
           rules () {
             return {
               'name': [
-                {'required': true, 'message': '请填写菜品名称', 'trigger': 'blur'}
+                {'required': true, 'message': 'Please enter food name', 'trigger': 'blur'}
               ],
               'categoryId': [
-                {'required': true, 'message': '请选择菜品分类', 'trigger': 'change'}
+                {'required': true, 'message': 'Please enter category', 'trigger': 'change'}
               ],
               'price': [
                 {
@@ -300,17 +300,17 @@
                   // 'message': '请填写菜品价格',
                   validator: (rules, value, callback) => {
                     if (!value) {
-                      callback(new Error('请填写菜品价格'))
+                      callback(new Error('Please enter food price'))
                     } else {
                       const reg = /^\d+(\.\d{0,2})?$/
                       if (reg.test(value)) {
-                        if(value < 10000){
+                        if(value < 100000000){
                           callback()
                         }else{
-                          callback(new Error('菜品价格小于10000'))
+                          callback(new Error('Food price should be less than 100000000'))
                         }
                       } else {
-                        callback(new Error('菜品价格格式只能为数字,且最多保留两位小数'))
+                        callback(new Error('Price should be float with 2 digits round'))
                       }
                     }
                   },
@@ -346,7 +346,7 @@
                 // this.imageUrl = res.data.data.image
                 this.imageUrl = `/common/download?name=${res.data.image}`
               } else {
-                this.$message.error(res.msg || '操作失败')
+                this.$message.error(res.msg || 'Fail Operation')
               }
             })
           },
@@ -393,7 +393,7 @@
               if (res.code === 1) {
                 this.dishList = res.data
               } else {
-                this.$message.error(res.msg || '操作失败')
+                this.$message.error(res.msg || 'Fail Operation')
               }
             })
           },
